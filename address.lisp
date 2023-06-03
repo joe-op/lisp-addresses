@@ -1,5 +1,5 @@
-(defun make-address (&key name addr1 addr2 city state zip notes)
-  (list :name name :addr1 addr1 :addr2 addr2 :city city :state state :zip zip :notes notes))
+(defun make-address (&key name name2 addr1 addr2 city state zip notes)
+  (list :name name :name name2 :addr1 addr1 :addr2 addr2 :city city :state state :zip zip :notes notes))
 
 (defun identity (x) x)
 
@@ -30,7 +30,8 @@
 		  (join-strs (cdr strs) :sep sep :prefix joined)))))
 
 (defun print-address (addr)
-  (let ((name (fold (getf addr :name) :empty "Anonymous address" :full (lambda (n) (format nil "~a" n))))
+  (let ((name (format nil "[~a]" (fold (getf addr :name) :empty "Anonymous address")))
+	(name2 (fold (getf addr :name2) :empty "" :full (lambda (n) (format nil "[~a]" n))))
 	(addr1 (fold-str (getf addr :addr1)))
 	(addr2 (fold-str (getf addr :addr2)))
 	(city (fold-str (getf addr :city)))
@@ -39,11 +40,17 @@
 	(notes (fold (getf addr :notes) :empty "" :full (lambda (n) (format nil "Notes: ~a" n)))))
     (with-newlines
       name
-      "-------------------"
+      name2
       addr1
       addr2
       (join-strs (list (join-strs (list city state)) zip) :sep " ")
       notes)))
+
+(defun print-addresses (addresses)
+  "Print a list of addresses"
+  (join-strs
+   (mapcar 'print-address addresses)
+   :sep (format nil "~%~%")))
 
 ;; https://gigamonkeys.com/book/practical-a-simple-database.html
 ;; Usage (save-addresses *db* filename)
