@@ -44,6 +44,23 @@
       addr2
       (join-strs (list (join-strs (list city state)) zip) :sep " ")
       notes)))
+
+;; https://gigamonkeys.com/book/practical-a-simple-database.html
+;; Usage (save-addresses *db* filename)
+(defun save-addresses (db filename)
+  (with-open-file (out filename
+		       :direction :output
+		       :if-exists :supersede)
+    (with-standard-io-syntax
+      (print db out))))
+
+;; Usage: (setf *db* (load-addresses "addresses.db"))
+(defun load-addresses (filename)
+  "Read and return addresses from `filename`"
+  (with-open-file (in filename)
+    (with-standard-io-syntax
+      (read in))))
+		   
     
     
 
